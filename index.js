@@ -42,7 +42,7 @@ async function run() {
     // await client.close();
   }
 }
-app.get("/helo", (req, res) => {
+app.get("/testing", (req, res) => {
   res.send("hello testing api");
 });
 app.get("/", (req, res) => {
