@@ -19,6 +19,7 @@ async function run() {
     await client.connect();
     const database = client.db("E_Bikers");
     const products = database.collection("products");
+    const confirmOrders = database.collection("confirmOrders");
     // get all products api
     app.get("/allproducts", async (req, res) => {
       const cursor = products.find({});
@@ -36,6 +37,23 @@ async function run() {
       const id = req.params.id;
       const result = await products.findOne({ _id: ObjectId(id) });
 
+      res.json(result);
+    });
+    // place order api
+    app.post("/placeOrder", async (req, res) => {
+      console.log("email paiche", req.body);
+      const result = await confirmOrders.insertOne(req.body);
+      res.json(result);
+    });
+    // my order api
+    app.get("/myOrder/:email", async (req, res) => {
+      const email = req.params.email;
+      console.log("email paiche", email);
+      const query = { email: email };
+
+      const cursor = confirmOrders.find(query);
+      const result = await cursor.toArray();
+      console.log("filter result", result);
       res.json(result);
     });
   } finally {
