@@ -3,6 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 const { MongoClient } = require("mongodb");
 const ObjectId = require("mongodb").ObjectId;
+const { parse } = require("dotenv");
 const app = express();
 const port = process.env.PORT || 5000;
 app.use(cors());
@@ -22,6 +23,7 @@ async function run() {
     const confirmOrders = database.collection("confirmOrders");
     const reviews = database.collection("reviews");
     const ourCollection = database.collection("ourCollection");
+    const parts = database.collection("parts");
     // get all products api
     app.get("/allproducts", async (req, res) => {
       const cursor = products.find({});
@@ -74,6 +76,29 @@ async function run() {
     // collection api get
     app.get("/ourCollection", async (req, res) => {
       const cursor = ourCollection.find({});
+      console.log("page", req.query);
+      const page = req.query.page;
+      const size = parseInt(req.query.size);
+      const count = await cursor.count();
+
+      let result;
+      if (page) {
+        result = await cursor
+          .skip(page * size)
+          .limit(size)
+          .toArray();
+      } else {
+        result = await cursor.toArray();
+      }
+      // console.log("filter result", result);
+      res.json({
+        count,
+        result,
+      });
+    });
+    // parts api get
+    app.get("/parts", async (req, res) => {
+      const cursor = parts.find({});
       const result = await cursor.toArray();
       console.log("filter result", result);
       res.json(result);
