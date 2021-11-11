@@ -20,6 +20,8 @@ async function run() {
     const database = client.db("E_Bikers");
     const products = database.collection("products");
     const confirmOrders = database.collection("confirmOrders");
+    const reviews = database.collection("reviews");
+    const ourCollection = database.collection("ourCollection");
     // get all products api
     app.get("/allproducts", async (req, res) => {
       const cursor = products.find({});
@@ -52,6 +54,26 @@ async function run() {
       const query = { email: email };
 
       const cursor = confirmOrders.find(query);
+      const result = await cursor.toArray();
+      console.log("filter result", result);
+      res.json(result);
+    });
+    // reviews post api
+    app.post("/reviews", async (req, res) => {
+      console.log("reviews", req.body);
+      const result = await reviews.insertOne(req.body);
+      res.json(result);
+    });
+    // reviews get api
+    app.get("/reviews", async (req, res) => {
+      const cursor = reviews.find({});
+      const result = await cursor.toArray();
+      console.log("filter result", result);
+      res.json(result);
+    });
+    // collection api get
+    app.get("/ourCollection", async (req, res) => {
+      const cursor = ourCollection.find({});
       const result = await cursor.toArray();
       console.log("filter result", result);
       res.json(result);
