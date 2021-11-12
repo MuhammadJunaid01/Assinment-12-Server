@@ -47,7 +47,14 @@ async function run() {
     // place order api
     app.post("/placeOrder", async (req, res) => {
       console.log("email paiche", req.body);
-      const result = await confirmOrders.insertOne(req.body);
+      const email = req.query.email;
+      const { _id, ...rest } = req.body;
+      const doc = {
+        ...rest,
+        email,
+        undefined: _id,
+      };
+      const result = await confirmOrders.insertOne(doc);
       res.json(result);
     });
     // my order api
