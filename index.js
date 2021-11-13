@@ -78,6 +78,13 @@ async function run() {
       const result = await cursor.toArray();
       res.json(result);
     });
+    // order cancel api
+    app.delete("/myOrder/:id", async (req, res) => {
+      console.log("my order hitted", req.params.id);
+      const id = req.params.id;
+      const result = await confirmOrders.deleteOne({ _id: ObjectId(id) });
+      res.json(result);
+    });
     // reviews post api
     app.post("/reviews", async (req, res) => {
       console.log("reviews", req.body);
