@@ -25,10 +25,22 @@ async function run() {
     const ourCollection = database.collection("ourCollection");
     const parts = database.collection("parts");
     const usersCollection = database.collection("users");
+    const award = database.collection("award");
+    app.get("/award", async (req, res) => {
+      const cursor = award.find({});
+      const result = await cursor.toArray();
+      res.json(result);
+    });
     // get all products api
     app.get("/allproducts", async (req, res) => {
       const cursor = products.find({});
       const result = await cursor.toArray();
+      res.json(result);
+    });
+    // delete single product
+    app.delete("/allproducts/:id", async (req, res) => {
+      const id = req.params.id;
+      const result = await products.deleteOne({ _id: ObjectId(id) });
       res.json(result);
     });
     // get limit product api
@@ -60,12 +72,10 @@ async function run() {
     // my order api
     app.get("/myOrder/:email", async (req, res) => {
       const email = req.params.email;
-      console.log("email paiche", email);
       const query = { email: email };
 
       const cursor = confirmOrders.find(query);
       const result = await cursor.toArray();
-      console.log("filter result", result);
       res.json(result);
     });
     // reviews post api
@@ -84,7 +94,6 @@ async function run() {
     // collection api get
     app.get("/ourCollection", async (req, res) => {
       const cursor = ourCollection.find({});
-      console.log("page", req.query);
       const page = req.query.page;
       const size = parseInt(req.query.size);
       const count = await cursor.count();
@@ -103,6 +112,17 @@ async function run() {
         count,
         result,
       });
+    });
+    // app.get('/')
+    app.post("/ourCollection", async (req, res) => {
+      console.log("add product", req.body);
+      const users = await ourCollection.insertOne(req.body);
+      res.json(users);
+    });
+    app.delete("/ourCollection/:id", async (req, res) => {
+      const id = req.params.id;
+      const result = await products.deleteOne({ _id: ObjectId(id) });
+      res.json(result);
     });
     // load singel data on our collection
     app.get("/ourCollection/:id", async (req, res) => {
